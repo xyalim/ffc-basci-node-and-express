@@ -1,17 +1,18 @@
 var express = require('express');
+const bodyParser = require('body-parser')
 const dotenv = require('dotenv')
 dotenv.config('./env')
 var app = express();
 const publicPath = __dirname + '/public'
 
 console.log("Hello World")
-
+app.use(bodyParser.urlencoded({ extended: false }))
 app.use("/", function (req, res, next) {
   console.log(`${req.method} ${req.path} - ${req.ip}`)
   next()
 })
 
-
+// 实现一个根级的请求记录中间件通过
 app.get('/', function (req, res) {
   const htmlPath = __dirname + '/views/index.html'
   res.sendFile(htmlPath)
@@ -30,22 +31,45 @@ app.get('/json', function (req, res) {
 
   }
 })
-app.use('/now',function (req, res, next) {
+// app.use('/now',function (req, res, next) {
+//   req.time = new Date().toString()
+//   next()
+// },)
+
+// 通过链式调用中间件来创建时间服务
+app.get('/now', function (req, res, next) {
   req.time = new Date().toString()
   next()
-},)
-
-app.get('/now', function (req,res,next) {
+}, function (req, res, next) {
   res.json({
     time: req.time
   })
-  next()
 })
 
+// 从客户端获取输入的路由参数
+app.get('/:word/echo', function (req, res, next) {
+  res.json({
+    echo: req.params.word
+  })
+})
 
-
-
-
+app.route('/name')
+  .get(function (req, res, next) {
+    const { first, last } = req.query
+    res.json({
+      name: `${first} ${last}`
+    })
+  })
+  .post(function (req, res, next) {
+    // const { first, last } = req.body
+    // console.log('65', req.body);
+    // res.json({
+    //   name: `${first} ${last}`
+    // })
+    res.json({
+      test: "123"
+    })
+  })
 
 
 

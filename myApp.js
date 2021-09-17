@@ -6,7 +6,9 @@ var app = express();
 const publicPath = __dirname + '/public'
 
 console.log("Hello World")
-app.use(bodyParser.urlencoded({ extended: false }))
+app.use(bodyParser.urlencoded({ extended: true }))
+app.use(bodyParser.json())
+
 app.use("/", function (req, res, next) {
   console.log(`${req.method} ${req.path} - ${req.ip}`)
   next()
@@ -61,13 +63,10 @@ app.route('/name')
     })
   })
   .post(function (req, res, next) {
-    // const { first, last } = req.body
-    // console.log('65', req.body);
-    // res.json({
-    //   name: `${first} ${last}`
-    // })
+    const { first, last } = req.body
+    // console.log('req.body',req.body)
     res.json({
-      test: "123"
+      name: `${first} ${last}`
     })
   })
 
